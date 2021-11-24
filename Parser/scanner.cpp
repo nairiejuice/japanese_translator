@@ -277,6 +277,7 @@ int scanner(tokentype& tt, string& w)
   // 1. If it is eofm, return right now.   
 
   fin >> w;
+  cout << "Scanner called using word: " << w << endl;
   if (w == "eofm") return 0;
 
   /*  **
@@ -331,30 +332,30 @@ int scanner(tokentype& tt, string& w)
 // This will go away after this assignment
 // DO NOT CHANGE THIS!!!!!! 
 // Done by:  Rika
-int main()
-{
-  tokentype thetype;
-  string theword; 
-  string filename;
+// int main()
+// {
+//   tokentype thetype;
+//   string theword; 
+//   string filename;
 
-  cout << "Enter the input file name: ";
-  cin >> filename;
+//   cout << "Enter the input file name: ";
+//   cin >> filename;
 
-  fin.open(filename.c_str());
+//   fin.open(filename.c_str());
 
-   while (true)
-    {
-       scanner(thetype, theword);  // call the scanner which sets
-                                   // the arguments  
-       if (theword == "eofm") break;  // stop now
+//    while (true)
+//     {
+//        scanner(thetype, theword);  // call the scanner which sets
+//                                    // the arguments  
+//        if (theword == "eofm") break;  // stop now
      
       
-      cout << "Type is:" << tokenName[thetype] << endl;
-      cout << "Word is:" << theword << endl;  
-    }
+//       cout << "Type is:" << tokenName[thetype] << endl;
+//       cout << "Word is:" << theword << endl;  
+//     }
 
-   cout << "End of file is encountered." << endl;
-   fin.close();
+//    cout << "End of file is encountered." << endl;
+//    fin.close();
 
-}// end
+// }// end
 

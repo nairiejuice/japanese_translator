@@ -19,9 +19,19 @@ using namespace std;
 
 // ----- Four Utility Functions and Globals -----------------------------------
 
-tokentype  saved_token;     // global buffer for the token the scanner returned.
+    // global buffer for the token the scanner returned.
+tokentype saved_token;
 string saved_lexeme;
 bool token_available = false;
+void story();
+void s();
+void afterSubject();
+void afterNoun();
+void afterObject();
+void noun();
+void verb();
+void be();
+void tense();
 
 // ** Need syntaxerror1 and syntaxerror2 functions (each takes 2 args)
 //    to display syntax error messages as specified by me.  
@@ -34,7 +44,7 @@ void syntaxerror1(tokentype expected, string given){
     }
 // Type of error: **
 // Done by: Wesley
-void syntaxerror2(parser_function function) {
+void syntaxerror2(string saved_lexeme, string function) {
    cout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
    exit(1);
 }
@@ -50,6 +60,7 @@ void syntaxerror2(parser_function function) {
 //      Returns the saved_token
 // Done by: Wesley
 tokentype next_token() {
+   
    if (!token_available) { // if there is no saved token yet
       scanner(saved_token, saved_lexeme); // call scanner to grab a new token
                                           // saved_token is the token type and
@@ -57,7 +68,7 @@ tokentype next_token() {
                                           // mark the fact that you have saved it
       token_available = true;
       if (saved_token == ERROR) {
-         syntax_error1(saved_token, saved_lexeme);
+         syntaxerror1(saved_token, saved_lexeme);
       }
    }
    return saved_token; // return the saved token
@@ -68,16 +79,17 @@ tokentype next_token() {
 //       and if so, generates a syntax error and handles the error
 //       else token_available becomes false (eat up) and returns true.    
 // Done by: Wesley & Kelyn
-boolean match(tokentype expected) {
+bool match(tokentype expected) {
    if (!(next_token() == expected)) { // mismatch has occurred with the next token
       // calls a syntax error function here to generate a syntax error message here and do recovery
       //syntax_error2(saved_lexeme, ……)
       syntaxerror1(expected, saved_lexeme); // this might need to be edited with the correct argument
    } else {
       token_available = false; // eat up the token
-      cout << "we are in match, token has been eaten up" << endl;
-      return true; // say there was a match
-       }
+      //cout << "we are in match, token has been eaten up" << endl;
+      cout << "Matched " << tokenName[expected] << endl;
+   }
+   return true; // say there was a match
 }
 
 // ----- RDP functions - one per non-term -------------------
@@ -86,17 +98,23 @@ boolean match(tokentype expected) {
 // Grammar: <story> ::= <s> { <s> }  // stay in the loop as long as a possible start 
 // Done by: Wesley
 void story() {
-   cout << "this is the story function" << endl;
-   s();
-   while (!next_token == EOFM) {
-      s();
+   cout << "Processing <story>\n" << endl;
+   while (true) {
+       // this doesn't even run...
+       if (next_token() == EOFM) {
+         cout << "hello world" << endl;
+         break;
+       } else {
+         s();
+       }
    }
-   cout << "end of story function" << endl;
+   cout << "Successfully parsed <story>." << endl;
 }
 
 // Grammar: <s>::= [CONNECTOR] <noun> SUBJECT <after subject>
 // Done by: Kelyn
 void s(){
+    cout << "Processing <s>" << endl;
     if(next_token() == CONNECTOR){
        match(CONNECTOR);
     }
@@ -108,27 +126,31 @@ void s(){
 // Grammar: <after subject> ::= <verb> <tense> PERIOD | <noun> <after noun>
 // Done by: Kelyn
 void afterSubject(){
+   cout << "Processing <afterSubject>" << endl;
        switch(next_token()){
-            case verb:
+            case WORD2:
                 verb();
                 tense();
                 match(PERIOD);
                 break;
          
-            case noun:
+            case WORD1:
+            case PRONOUN: // noun might be multiple things
                 noun();
                 afterNoun();
                 break;
             default:
-               syntaxerror2();
+               syntaxerror2(saved_lexeme, "afterSubject");
        }
 }
 
 // Grammar: <after noun> ::= <be> PERIOD | DESTINATION <verb> <tense> PERIOD| OBJECT <after object>   
 // Done by: Kelyn
 void afterNoun(){
+   cout << "Processing <afterNoun>" << endl;
    switch(next_token()){
-      case be:
+      case IS:
+      case WAS:
          be();
          match(PERIOD);
          break;
@@ -143,20 +165,22 @@ void afterNoun(){
          afterObject();
          break;
       default:
-         syntaxerror2();
+         syntaxerror2(saved_lexeme, "afterNoun");
    }
 }
 
 //Grammar: <after object> ::= <verb> <tense> PERIOD | <noun> DESTINATION <verb> <tense> PERIOD
 //Done by: Kelyn
 void afterObject(){
+   cout << "Processing <afterObject>" << endl;
    switch(next_token()){
-      case verb:
+      case WORD2:
          verb();
          tense();
          match(PERIOD);
          break;
-      case noun:
+      case WORD1:
+      case PRONOUN:
          noun();
          match(DESTINATION);
          verb();
@@ -164,7 +188,7 @@ void afterObject(){
          match(PERIOD);
          break;
       default:
-         syntaxerror2();
+         syntaxerror2(saved_lexeme, "afterObject");
    }
 
 }
@@ -173,6 +197,7 @@ void afterObject(){
 // Grammar: <noun> ::= WORD1 | PRONOUN 
 // Done by: Kelyn
 void noun(){
+    cout << "Processing <noun>" << endl;
    switch(next_token()){
       case WORD1:
          match(WORD1);
@@ -181,7 +206,7 @@ void noun(){
          match(PRONOUN);
          break;
       default:
-         syntaxerror2();
+         syntaxerror2(saved_lexeme, "noun");
    }
 }
 
@@ -189,7 +214,7 @@ void noun(){
 // Grammar: <verb> ::= WORD2
 // Done by: Wesley
 void verb(){
-   cout << "this is the verb function" << endl;
+   cout << "Processing <verb>" << endl;
    match(WORD2);
 }
 
@@ -197,7 +222,7 @@ void verb(){
 // Grammar: <be> ::=   IS | WAS
 // Done by: Wesley
 void be(){
-   cout << "this is the be function" << endl;
+   cout << "Processing <be>" << endl;
    switch (next_token()) {
       case IS:
          match(IS);
@@ -206,7 +231,7 @@ void be(){
          match(WAS);
          break;
       default:
-         syntaxerror2(); // need to pass something in
+         syntaxerror2(saved_lexeme, "be"); // need to pass something in
    }
 }
 
@@ -214,7 +239,7 @@ void be(){
 // Grammar: <tense> := VERBPAST  | VERBPASTNEG | VERB | VERBNEG
 // Done by: Wesley
 void tense(){
-   cout << "this is the tense function" << endl;
+   cout << "Processing <tense>" << endl;
    switch (next_token()) {
       case VERBPAST:
          match(VERBPAST);
@@ -229,7 +254,7 @@ void tense(){
          match(VERBNEG);
          break;
       default:
-         syntaxerror2(); // need to pass something in
+         syntaxerror2(saved_lexeme, "tense"); // need to pass something in
    }
 }
 
@@ -255,3 +280,4 @@ int main()
 //** require no other input files!
 //** syntax error EC requires producing errors.txt of error messages
 //** tracing On/Off EC requires sending a flag to trace message output functions
+

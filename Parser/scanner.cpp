@@ -307,7 +307,7 @@ int scanner(tokentype& tt, string& w)
   }
   else{
     tt = ERROR;
-    //cout << "You have encountered a Lexical Error OH NO!!" << endl;
+    cout << "Lexical error: " << w << " is not a valid token" << endl;
   }
 
   /*

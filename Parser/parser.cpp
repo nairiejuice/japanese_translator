@@ -39,10 +39,10 @@ void tense();
 // Type of error: mismatch error
 // Done by: Kelyn
 void syntaxerror1(tokentype expected, string given){
-   cout<<"SYNTAX ERROR: expected "<< expected<< " but found "<< given<<endl;
+   cout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
    exit(1);
     }
-// Type of error: **
+// Type of error: Lexical
 // Done by: Wesley
 void syntaxerror2(string saved_lexeme, string function) {
    cout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
@@ -60,16 +60,12 @@ void syntaxerror2(string saved_lexeme, string function) {
 //      Returns the saved_token
 // Done by: Wesley
 tokentype next_token() {
-   
    if (!token_available) { // if there is no saved token yet
       scanner(saved_token, saved_lexeme); // call scanner to grab a new token
                                           // saved_token is the token type and
                                           // saved_lexeme is the word that is read in
                                           // mark the fact that you have saved it
       token_available = true;
-      if (saved_token == ERROR) {
-         syntaxerror1(saved_token, saved_lexeme);
-      }
    }
    return saved_token; // return the saved token
 }
@@ -99,7 +95,9 @@ bool match(tokentype expected) {
 // Done by: Wesley
 void story() {
    cout << "Processing <story>\n" << endl;
+   s();
    while (true) {
+       //next_token() == 2 would be 'eofm'
        if (next_token() == 2) {
          break;
        } else {
@@ -188,7 +186,6 @@ void afterObject(){
       default:
          syntaxerror2(saved_lexeme, "afterObject");
    }
-
 }
 
 // 7

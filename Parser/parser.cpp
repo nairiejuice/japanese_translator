@@ -100,9 +100,7 @@ bool match(tokentype expected) {
 void story() {
    cout << "Processing <story>\n" << endl;
    while (true) {
-       // this doesn't even run...
-       if (next_token() == EOFM) {
-         cout << "hello world" << endl;
+       if (next_token() == 2) {
          break;
        } else {
          s();

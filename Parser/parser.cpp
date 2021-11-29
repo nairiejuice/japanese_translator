@@ -23,6 +23,7 @@ using namespace std;
 tokentype saved_token;
 string saved_lexeme;
 string response;
+ofstream fout;
 bool token_available = false;
 void story();
 void s();
@@ -36,8 +37,9 @@ void tense();
 tokentype next_token();
 bool match(tokentype);
 
+//Done by: Jacob
 //method to turn on and off tracing messages
-const bool Tracing = false; //change to false to disable tracing mesages
+const bool Tracing = true; //change to false to disable tracing mesages
 
 void tracing (string grammerType){
    if (Tracing){
@@ -52,6 +54,7 @@ void tracing (string grammerType){
 // Done by: Kelyn
 void syntaxerror1(tokentype expected, string given){
    cout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
+   fout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
    cout<<"Skip or replace the token? (s or r)";
    cin >> response;
    if(response == "r"){
@@ -72,6 +75,7 @@ void syntaxerror1(tokentype expected, string given){
 // Done by: Wesley
 void syntaxerror2(string saved_lexeme, string function) {
    cout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
+   fout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
    exit(1);
 }
 
@@ -100,7 +104,7 @@ tokentype next_token() {
 // How: Check to see if expected is different from next_token()
 //       and if so, generates a syntax error and handles the error
 //       else token_available becomes false (eat up) and returns true.    
-// Done by: Wesley & Kelyn
+// Done by: Wesley, Kelyn & Jacob
 bool match(tokentype expected) {
    if (!(next_token() == expected)) { // mismatch has occurred with the next token
       // calls a syntax error function here to generate a syntax error message here and do recovery
@@ -138,7 +142,7 @@ void story() {
 }
 
 // Grammar: <s>::= [CONNECTOR] <noun> SUBJECT <after subject>
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void s(){
     //cout << "Processing <s>" << endl;
     tracing("<s>");
@@ -151,7 +155,7 @@ void s(){
 }
 
 // Grammar: <after subject> ::= <verb> <tense> PERIOD | <noun> <after noun>
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void afterSubject(){
    //cout << "Processing <afterSubject>" << endl;
    tracing("<afterSubject>");
@@ -173,7 +177,7 @@ void afterSubject(){
 }
 
 // Grammar: <after noun> ::= <be> PERIOD | DESTINATION <verb> <tense> PERIOD| OBJECT <after object>   
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void afterNoun(){
    //cout << "Processing <afterNoun>" << endl;
    tracing("<afterNoun>");
@@ -199,7 +203,7 @@ void afterNoun(){
 }
 
 //Grammar: <after object> ::= <verb> <tense> PERIOD | <noun> DESTINATION <verb> <tense> PERIOD
-//Done by: Kelyn
+//Done by: Kelyn & Jacob
 void afterObject(){
    //cout << "Processing <afterObject>" << endl;
    tracing("<afterObject>");
@@ -224,7 +228,7 @@ void afterObject(){
 
 // 7
 // Grammar: <noun> ::= WORD1 | PRONOUN 
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void noun(){
    //cout << "Processing <noun>" << endl;
    tracing("<noun>");
@@ -251,7 +255,7 @@ void verb(){
 
 // 9
 // Grammar: <be> ::=   IS | WAS
-// Done by: Wesley
+// Done by: Wesley & Jacob
 void be(){
    //cout << "Processing <be>" << endl;
    tracing("<be>");
@@ -303,11 +307,13 @@ int main()
   cout << "Enter the input file name: ";
   cin >> filename;
   fin.open(filename.c_str());
+  fout.open("errors.txt");
 
   //** calls the <story> to start parsing
   //** closes the input file
   story();
   fin.close();
+  fout.close();
 
 }// end
 //** require no other input files!

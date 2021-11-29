@@ -33,6 +33,17 @@ void verb();
 void be();
 void tense();
 
+
+
+//meathod to turn on and off tracing messages
+const bool Tracing = false; //change to false to disable tracing mesages
+
+void tracing (string grammerType){
+   if (Tracing){
+      cout << "Processing " << grammerType << endl;
+   }
+}
+
 // ** Need syntaxerror1 and syntaxerror2 functions (each takes 2 args)
 //    to display syntax error messages as specified by me.  
 
@@ -94,7 +105,8 @@ bool match(tokentype expected) {
 // Grammar: <story> ::= <s> { <s> }  // stay in the loop as long as a possible start 
 // Done by: Wesley
 void story() {
-   cout << "Processing <story>\n" << endl;
+   //cout << "Processing <story>\n" << endl;
+   tracing("<story>");
    s();
    while (true) {
        //next_token() == 2 would be 'eofm'
@@ -104,13 +116,17 @@ void story() {
          s();
        }
    }
-   cout << "Successfully parsed <story>." << endl;
+   if (Tracing){
+      cout << "Successfully parsed <story>." << endl;
+   }
+   
 }
 
 // Grammar: <s>::= [CONNECTOR] <noun> SUBJECT <after subject>
 // Done by: Kelyn
 void s(){
-    cout << "Processing <s>" << endl;
+    //cout << "Processing <s>" << endl;
+    tracing("<s>");
     if(next_token() == CONNECTOR){
        match(CONNECTOR);
     }
@@ -122,7 +138,8 @@ void s(){
 // Grammar: <after subject> ::= <verb> <tense> PERIOD | <noun> <after noun>
 // Done by: Kelyn
 void afterSubject(){
-   cout << "Processing <afterSubject>" << endl;
+   //cout << "Processing <afterSubject>" << endl;
+   tracing("<afterSubject>");
        switch(next_token()){
             case WORD2:
                 verb();
@@ -143,7 +160,8 @@ void afterSubject(){
 // Grammar: <after noun> ::= <be> PERIOD | DESTINATION <verb> <tense> PERIOD| OBJECT <after object>   
 // Done by: Kelyn
 void afterNoun(){
-   cout << "Processing <afterNoun>" << endl;
+   //cout << "Processing <afterNoun>" << endl;
+   tracing("<afterNoun>");
    switch(next_token()){
       case IS:
       case WAS:
@@ -168,7 +186,8 @@ void afterNoun(){
 //Grammar: <after object> ::= <verb> <tense> PERIOD | <noun> DESTINATION <verb> <tense> PERIOD
 //Done by: Kelyn
 void afterObject(){
-   cout << "Processing <afterObject>" << endl;
+   //cout << "Processing <afterObject>" << endl;
+   tracing("<afterObject>");
    switch(next_token()){
       case WORD2:
          verb();
@@ -192,7 +211,8 @@ void afterObject(){
 // Grammar: <noun> ::= WORD1 | PRONOUN 
 // Done by: Kelyn
 void noun(){
-    cout << "Processing <noun>" << endl;
+   //cout << "Processing <noun>" << endl;
+   tracing("<noun>");
    switch(next_token()){
       case WORD1:
          match(WORD1);
@@ -209,7 +229,8 @@ void noun(){
 // Grammar: <verb> ::= WORD2
 // Done by: Wesley
 void verb(){
-   cout << "Processing <verb>" << endl;
+   //cout << "Processing <verb>" << endl;
+   tracing("<verb>");
    match(WORD2);
 }
 
@@ -217,7 +238,8 @@ void verb(){
 // Grammar: <be> ::=   IS | WAS
 // Done by: Wesley
 void be(){
-   cout << "Processing <be>" << endl;
+   //cout << "Processing <be>" << endl;
+   tracing("<be>");
    switch (next_token()) {
       case IS:
          match(IS);
@@ -234,7 +256,8 @@ void be(){
 // Grammar: <tense> := VERBPAST  | VERBPASTNEG | VERB | VERBNEG
 // Done by: Wesley
 void tense(){
-   cout << "Processing <tense>" << endl;
+   //cout << "Processing <tense>" << endl;
+   tracing("<tense>");
    switch (next_token()) {
       case VERBPAST:
          match(VERBPAST);

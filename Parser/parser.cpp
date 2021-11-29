@@ -22,6 +22,7 @@ using namespace std;
     // global buffer for the token the scanner returned.
 tokentype saved_token;
 string saved_lexeme;
+string response;
 bool token_available = false;
 void story();
 void s();
@@ -32,10 +33,10 @@ void noun();
 void verb();
 void be();
 void tense();
+tokentype next_token();
+bool match(tokentype);
 
-
-
-//meathod to turn on and off tracing messages
+//method to turn on and off tracing messages
 const bool Tracing = false; //change to false to disable tracing mesages
 
 void tracing (string grammerType){
@@ -51,8 +52,22 @@ void tracing (string grammerType){
 // Done by: Kelyn
 void syntaxerror1(tokentype expected, string given){
    cout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
-   exit(1);
-    }
+   cout<<"Skip or replace the token? (s or r)";
+   cin >> response;
+   if(response == "r"){
+      saved_token = expected;
+      match(expected);
+   }
+   else if(response == "s"){
+      token_available = false;
+      match(expected);
+   }
+   else{
+      cout<<"ERROR: value entered not a valid choice"<<endl;
+      exit(1);
+   }
+   //exit(1);
+}
 // Type of error: Lexical
 // Done by: Wesley
 void syntaxerror2(string saved_lexeme, string function) {

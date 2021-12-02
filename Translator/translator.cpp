@@ -65,7 +65,9 @@ void tracing(string grammarType)
 void syntaxerror1(tokentype expected, string given)
 {
    cout << "SYNTAX ERROR: expected " << tokenName[expected] << " but found " << given << endl;
+   fout.open("errors.txt");
    fout << "SYNTAX ERROR: expected " << tokenName[expected] << " but found " << given << endl;
+   fout.close();
    cout << "Skip or replace the token? (s or r)";
    cin >> response;
    if (response == "r")
@@ -90,7 +92,9 @@ void syntaxerror1(tokentype expected, string given)
 void syntaxerror2(string saved_lexeme, string function)
 {
    cout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
+   fout.open("errors.txt");
    fout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
+   fout.close();
    exit(1);
 }
 

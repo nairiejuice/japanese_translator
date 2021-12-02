@@ -4,3 +4,15 @@ DESCRIPTION: rika
 TENSE: IS
 
 SYNTAX ERROR: expected PERIOD but found ne
+ACTOR: I/me
+DESCRIPTION: teacher
+TENSE: IS
+
+CONNECTOR: Therefore
+SYNTAX ERROR: expected SUBJECT but found de
+ACTOR: I/me
+DESCRIPTION: rika
+TENSE: IS
+
+ACTOR: I/me
+SYNTAX ERROR: unexpected mashita found in afterNoun

@@ -1,0 +1,6 @@
+CONNECTOR: Then
+ACTOR: I/me
+DESCRIPTION: rika
+TENSE: IS
+
+SYNTAX ERROR: expected PERIOD but found ne

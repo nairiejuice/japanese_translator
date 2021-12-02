@@ -22,6 +22,8 @@ using namespace std;
     // global buffer for the token the scanner returned.
 tokentype saved_token;
 string saved_lexeme;
+string response;
+ofstream fout;
 bool token_available = false;
 void story();
 void s();
@@ -32,6 +34,18 @@ void noun();
 void verb();
 void be();
 void tense();
+tokentype next_token();
+bool match(tokentype);
+
+//Done by: Jacob
+//method to turn on and off tracing messages
+const bool Tracing = true; //change to false to disable tracing mesages
+
+void tracing (string grammerType){
+   if (Tracing){
+      cout << "Processing " << grammerType << endl;
+   }
+}
 
 // ** Need syntaxerror1 and syntaxerror2 functions (each takes 2 args)
 //    to display syntax error messages as specified by me.  
@@ -40,12 +54,28 @@ void tense();
 // Done by: Kelyn
 void syntaxerror1(tokentype expected, string given){
    cout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
-   exit(1);
-    }
+   fout<<"SYNTAX ERROR: expected "<< tokenName[expected] << " but found "<< given<<endl;
+   cout<<"Skip or replace the token? (s or r)";
+   cin >> response;
+   if(response == "r"){
+      saved_token = expected;
+      match(expected);
+   }
+   else if(response == "s"){
+      token_available = false;
+      match(expected);
+   }
+   else{
+      cout<<"ERROR: value entered not a valid choice"<<endl;
+      exit(1);
+   }
+   //exit(1);
+}
 // Type of error: Lexical
 // Done by: Wesley
 void syntaxerror2(string saved_lexeme, string function) {
    cout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
+   fout << "SYNTAX ERROR: unexpected " << saved_lexeme << " found in " << function << endl;
    exit(1);
 }
 
@@ -74,7 +104,7 @@ tokentype next_token() {
 // How: Check to see if expected is different from next_token()
 //       and if so, generates a syntax error and handles the error
 //       else token_available becomes false (eat up) and returns true.    
-// Done by: Wesley & Kelyn
+// Done by: Wesley, Kelyn & Jacob
 bool match(tokentype expected) {
    if (!(next_token() == expected)) { // mismatch has occurred with the next token
       // calls a syntax error function here to generate a syntax error message here and do recovery
@@ -94,7 +124,8 @@ bool match(tokentype expected) {
 // Grammar: <story> ::= <s> { <s> }  // stay in the loop as long as a possible start 
 // Done by: Wesley
 void story() {
-   cout << "Processing <story>\n" << endl;
+   //cout << "Processing <story>\n" << endl;
+   tracing("<story>");
    s();
    while (true) {
        //next_token() == 2 would be 'eofm'
@@ -104,13 +135,17 @@ void story() {
          s();
        }
    }
-   cout << "Successfully parsed <story>." << endl;
+   if (Tracing){
+      cout << "Successfully parsed <story>." << endl;
+   }
+   
 }
 
 // Grammar: <s>::= [CONNECTOR] <noun> SUBJECT <after subject>
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void s(){
-    cout << "Processing <s>" << endl;
+    //cout << "Processing <s>" << endl;
+    tracing("<s>");
     if(next_token() == CONNECTOR){
        match(CONNECTOR);
     }
@@ -120,9 +155,10 @@ void s(){
 }
 
 // Grammar: <after subject> ::= <verb> <tense> PERIOD | <noun> <after noun>
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void afterSubject(){
-   cout << "Processing <afterSubject>" << endl;
+   //cout << "Processing <afterSubject>" << endl;
+   tracing("<afterSubject>");
        switch(next_token()){
             case WORD2:
                 verb();
@@ -141,9 +177,10 @@ void afterSubject(){
 }
 
 // Grammar: <after noun> ::= <be> PERIOD | DESTINATION <verb> <tense> PERIOD| OBJECT <after object>   
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void afterNoun(){
-   cout << "Processing <afterNoun>" << endl;
+   //cout << "Processing <afterNoun>" << endl;
+   tracing("<afterNoun>");
    switch(next_token()){
       case IS:
       case WAS:
@@ -166,9 +203,10 @@ void afterNoun(){
 }
 
 //Grammar: <after object> ::= <verb> <tense> PERIOD | <noun> DESTINATION <verb> <tense> PERIOD
-//Done by: Kelyn
+//Done by: Kelyn & Jacob
 void afterObject(){
-   cout << "Processing <afterObject>" << endl;
+   //cout << "Processing <afterObject>" << endl;
+   tracing("<afterObject>");
    switch(next_token()){
       case WORD2:
          verb();
@@ -190,9 +228,10 @@ void afterObject(){
 
 // 7
 // Grammar: <noun> ::= WORD1 | PRONOUN 
-// Done by: Kelyn
+// Done by: Kelyn & Jacob
 void noun(){
-    cout << "Processing <noun>" << endl;
+   //cout << "Processing <noun>" << endl;
+   tracing("<noun>");
    switch(next_token()){
       case WORD1:
          match(WORD1);
@@ -209,15 +248,17 @@ void noun(){
 // Grammar: <verb> ::= WORD2
 // Done by: Wesley
 void verb(){
-   cout << "Processing <verb>" << endl;
+   //cout << "Processing <verb>" << endl;
+   tracing("<verb>");
    match(WORD2);
 }
 
 // 9
 // Grammar: <be> ::=   IS | WAS
-// Done by: Wesley
+// Done by: Wesley & Jacob
 void be(){
-   cout << "Processing <be>" << endl;
+   //cout << "Processing <be>" << endl;
+   tracing("<be>");
    switch (next_token()) {
       case IS:
          match(IS);
@@ -234,7 +275,8 @@ void be(){
 // Grammar: <tense> := VERBPAST  | VERBPASTNEG | VERB | VERBNEG
 // Done by: Wesley
 void tense(){
-   cout << "Processing <tense>" << endl;
+   //cout << "Processing <tense>" << endl;
+   tracing("<tense>");
    switch (next_token()) {
       case VERBPAST:
          match(VERBPAST);
@@ -265,11 +307,13 @@ int main()
   cout << "Enter the input file name: ";
   cin >> filename;
   fin.open(filename.c_str());
+  fout.open("errors.txt");
 
   //** calls the <story> to start parsing
   //** closes the input file
   story();
   fin.close();
+  fout.close();
 
 }// end
 //** require no other input files!
